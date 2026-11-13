@@ -1,0 +1,6 @@
+name: lanus_analytics
+version: '1.0.0'
+config-version: 2
+profile: lanus_analytics
+model-paths: ["models"]
+clean-targets: ["target", "dbt_packages"]

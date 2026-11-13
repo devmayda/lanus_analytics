@@ -1,0 +1,17 @@
+ services:
+  dbt:
+    container_name: lanus_analtytics
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dbt_project:/usr/app/dbt
+      - ./credentials:/credentials:ro
+    environment:
+      - DBT_PROFILES_DIR=/usr/app/dbt
+      - TZ=America/Argentina/Buenos_Aires
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+

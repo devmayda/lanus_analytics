@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: fct_interventions
+    description: >
+      Master table of Municipal interventions at the school level.
+      Designed as One Big Table, it has all dimensions and metrics
+      used in the final report. Having Looker studio blend and match
+      data sources sometimes made the dashboard slower and less responsive.
+      
+      
+      BUSINESS RULES & KNOWN LIMITATIONS:
+      1- Scope: Reporting focuses on public institutions, but records of interventions in private
+         schools do reach reach the dashboard.
+      2- Private Schools: Operational records involving private institutions (unregistered CUEs) are
+         mostly incomplete due to lack of dimensional data coming from public schools database.
+         These records do reach the dashboard, but are of little analytic value.
+      3- There are interventions with no school set as object, mainly in the case of events. These
+         reach the dashboard but may show in certain reports that need a school id.
+      4- Reporting Spine: Employs an entity-calendar scaffolding pattern to retain public schools 
+         with zero interventions ('unreached') for accurate territory auditing.
+
+    columns:
+      - name: intervention_id
+        description: Unique ID for every intervention or unreached school for a given year.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: school_id
+        description: Unique School identifier (CUE). It must exist in the school master directory.
+        data_tests:
+          - not_null:
+              config:
+                where: "school_sector = 'Estatal'"
+          - relationships:
+              to: ref('stg_schools')
+              field: school_id
+              config:
+                severity: warn
+
+      - name: intervention_status
+        description: Execution status of the intervention.
+        data_tests:
+          - accepted_values:
+              values: ['executed', 'not executed', 'unreached']
+    

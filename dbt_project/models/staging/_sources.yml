@@ -1,0 +1,55 @@
+version: 2
+
+sources:
+  - name: lanus_operations
+    description: Data tables sourced from the google sheets files used by operations teams.
+    database: "{{ env_var('DBT_GCP_PROJECT') }}"
+    schema:  secretaria_educacion_lanus
+    tables:
+      - name: pedido
+        description: This table contains procurement requests and introduces a unique ID that allows us to match every step in the procurement process to a specific project.
+        columns:
+          - name: PID
+            description: Unique Project ID.
+            data_tests:
+              - unique
+      - name: contratacion
+      - name: adjudicacion
+      - name: facturacion
+      - name: desafectaciones
+      - name: georref
+        description: Table that matches investment projects (PID) to individual schools.
+      - name: matricula
+        description: Enrolment database.
+      - name: registro_micros
+        description: Raw data from the school bus operations team.
+        columns:
+          - name: id
+            description: Trip id is NOT UNIQUE, it may be repeated (one trip for several schools). Row deaggregated on a trip by school basis.
+
+  - name: lanus_bases
+    description: Dataset planned to contain mostly static databases (mainly school census data).
+    database: "{{ env_var('DBT_GCP_PROJECT') }}"
+    schema:  bases
+    tables:
+      - name: padron_cue
+        description: Data from school
+        columns: 
+          - name: cueanexo
+            description: Unique ID for every school according to national school census.
+            data_tests:
+              - unique
+
+  - name: lanus_planning
+    description: Dataset containing tables used daily by the planning team.
+    database: "{{ env_var('DBT_GCP_PROJECT') }}"
+    schema:  dasboard_lanus_v2
+    tables:
+      - name: eventos_agenda
+        description: Raw school events data.
+        columns: 
+          - name: ID_Evento
+            description: School event ID as assigned by an Apps Script powered webapp that saves data into the google sheet.
+            data_tests:
+              - unique
+              

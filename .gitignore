@@ -1,0 +1,8 @@
+# Credenciales gcp
+*.env
+credentials/
+*.json
+profiles.yml
+.user.yml
+dbt_project/logs/
+dbt_project/target/
