@@ -8,6 +8,7 @@ renamed_columns AS (
     SELECT
     
     CAST(src.id AS STRING) AS trip_id,
+    ROW_NUMBER() OVER (PARTITION BY src.id ORDER BY src.escuela ASC, src.cue ASC) AS trip_school_tally,
     INITCAP(TRIM(CAST(src.escuela AS STRING))) AS school_name,
     CAST(src.cue AS STRING) AS school_id,
     SAFE_CAST(src.fecha_salida AS DATE) AS trip_date,
