@@ -2,21 +2,19 @@ lanus_analytics:
   target: dev
   outputs:
     dev:
-     type: bigquery
-     method: service-account
-     project: gcp_id
-     dataset: analytics_dev
-     keyfile: credentials_keyfile
-     threads: 4
-     location: datawarehouse_server_location
+      type: bigquery
+      method: service-account
+      project: gcp_id
+      dataset: analytics_dev
+      keyfile: credentials_keyfile
+      threads: 4
+      location: datawarehouse_server_location
 
-  target: prod
-  outputs:
     prod:
-     type: bigquery
-     method: service-account
-     project: gcp_id
-     dataset: analytics_prod
-     keyfile: credentials_keyfile
-     threads: 4
-     location: datawarehouse_server_location
+      type: bigquery
+      method: service-account
+      project: gcp_id
+      dataset: analytics_prod
+      keyfile: credentials_keyfile
+      threads: 4
+      location: datawarehouse_server_location

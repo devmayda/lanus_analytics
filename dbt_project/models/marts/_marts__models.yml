@@ -1,5 +1,7 @@
 version: 2
 
+#                   FCT INTERVENTIONS               #
+
 models:
   - name: fct_interventions
     description: >
@@ -9,16 +11,22 @@ models:
       data sources sometimes made the dashboard slower and less responsive.
       
       
+      
       BUSINESS RULES & KNOWN LIMITATIONS:
       1- Scope: Reporting focuses on public institutions, but records of interventions in private
-         schools do reach reach the dashboard.
+         schools do reach reach the dashboard.   
       2- Private Schools: Operational records involving private institutions (unregistered CUEs) are
          mostly incomplete due to lack of dimensional data coming from public schools database.
          These records do reach the dashboard, but are of little analytic value.
       3- There are interventions with no school set as object, mainly in the case of events. These
-         reach the dashboard but may show in certain reports that need a school id.
+         reach the dashboard but may not be shown in reports that need a school id.
       4- Reporting Spine: Employs an entity-calendar scaffolding pattern to retain public schools 
-         with zero interventions ('unreached') for accurate territory auditing.
+         with zero interventions ('unreached') for accurate territory auditing. It works when time filter
+         compares within a specific calendar year, but is a subpar solution when filtered by different
+         time frames.
+
+
+#                   INTERVENTIONS: ID COLUMNS               #
 
     columns:
       - name: intervention_id
@@ -26,6 +34,11 @@ models:
         data_tests:
           - unique
           - not_null
+
+      - name: origin_database_id
+        description: >
+          ID from the original database (table of origins or operations database
+          where the record comes from).
 
       - name: school_id
         description: Unique School identifier (CUE). It must exist in the school master directory.
@@ -39,9 +52,74 @@ models:
               config:
                 severity: warn
 
+
+#                   INTERVENTIONS: MAIN METRICS              #
+
+      - name: affected_students
+        description: >
+          This metric shows the amount of students affected by an intervention.
+          In some cases (mainly procurement operations) the metric is taken from
+          enrolment data because all students are presumed to be affected by
+          the intervention. 
+
+      - name: affected_adults
+        description: >
+          This metric shows the amount of non-students affected by an intervention.
+          They may be faculty, parents or other people affected. Current input mechanisms
+          don't let us deaggregate further.
+
+#                   INTERVENTIONS: DIMENSIONAL COLUMNS              #
+
+      - name: school_coordinates
+        description: >
+          Coordinates as a STRING containing 'Lattitude, Longitude'.
+          May be null when interventions not specifically destined to a school.
+        data_tests:
+          - not_null:
+              config:
+                where: 'school_id IS NOT NULL'
+
+      - name: intervention_type
+        description: Type of intervention, used for grouping and descriptive analysis.
+
+      - name: intervention_description
+        description: >
+          Text string that describes the intervention, input written at origins
+          by the operations team that owns the workflow.
+
+      - name: intervention_date
+        description: Date of intervention. Is the main point of reference for period filtering.
+
+      - name: line_of_action
+        description: >
+          Name of the line of action the intervention belongs to.
+          Categories built by the public policy planning team for
+          referencing interventions at a Secretariat level.
+
+      - name: program
+        description: >
+          Name of the program the intervention belongs to.
+          Categories built by the public policy planning team for
+          referencing interventions at a Secretariat level.
+
       - name: intervention_status
         description: Execution status of the intervention.
         data_tests:
           - accepted_values:
               values: ['executed', 'not executed', 'unreached']
     
+  
+  
+  #                   DIM SCHOOLS               #
+  
+  - name: dim_schools
+    description: >
+      Master dimensional table relating to public schools in the district.
+      It will be updated to contain private institutions in the future.
+
+    columns:
+      - name: school_id
+        description: Unique ID for every intervention or unreached school for a given year.
+        data_tests:
+          - unique
+          - not_null
