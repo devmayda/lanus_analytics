@@ -22,7 +22,7 @@ This unified grain brings together three distinct workflows into one fact table 
 
 ```mermaid
 flowchart LR
-    A[Operational Sources<br/>Google Sheets & Apps Script] -->|BigQuery External Table (Google Sheets)| B[(BigQuery Raw<br/>lanus_operations / lanus_bases / lanus_planning)]
+    A[Operational Sources<br/>Google Sheets & Apps Script] -->|"[Google Sheets ]"| B[(BigQuery Raw<br/>lanus_operations / lanus_bases / lanus_planning)]
     B --> C[dbt Staging<br/>stg_* views]
     C --> D[dbt Intermediate<br/>int_* transformations]
     D --> E[(BigQuery Marts<br/>fct_interventions & dim_schools)]
